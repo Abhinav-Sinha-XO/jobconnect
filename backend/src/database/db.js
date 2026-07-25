@@ -16,6 +16,7 @@ async function connectDB() {
         console.log("✅ PostgreSQL Connected Successfully");
         console.log(result.rows);
     } catch (error) {
+        console.log("❌ PostgreSQL Connection Failed");
         console.error("❌ Database Connection Failed");
         console.error(error.message);
     }
