@@ -4,8 +4,11 @@ async function registerUser(req, res) {
 
     const result = await userService.registerUser(req.body);
 
-    res.status(200).json(result);
+    if (!result.success) {
+        return res.status(409).json(result);
+    }
 
+    return res.status(201).json(result);
 }
 
 module.exports = {
