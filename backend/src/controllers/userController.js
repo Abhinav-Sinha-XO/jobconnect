@@ -1,15 +1,14 @@
 const userService = require("../services/userService");
+const asyncHandler = require("../utils/asyncHandler");
 
-async function registerUser(req, res) {
+
+const registerUser = asyncHandler(async (req, res) => {
 
     const result = await userService.registerUser(req.body);
 
-    if (!result.success) {
-        return res.status(409).json(result);
-    }
+    res.status(201).json(result);
 
-    return res.status(201).json(result);
-}
+});
 
 module.exports = {
     registerUser,
