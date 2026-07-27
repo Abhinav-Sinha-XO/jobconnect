@@ -1,6 +1,6 @@
 const express = require("express");
 const notFound = require("./middleware/notFound");
-const errorHandler = require("./middleware/errorHandler");
+
  const errorMiddleware = require("./middleware/errorMiddleware");
 const userRoutes = require("./routes/userRoutes");
 
@@ -24,8 +24,8 @@ app.get("/", (req, res) => {
 app.use("/api/users", userRoutes);
 
 app.use(notFound);
-app.use(errorHandler);
 app.use(errorMiddleware);
+
 
 
 

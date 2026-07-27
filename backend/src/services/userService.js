@@ -6,7 +6,7 @@ const ApiError = require("../utils/ApiError");
 
 async function registerUser(userData) {
   const { name, email, password, role } = userData;
-
+  
   if (
     !name ||
     !name.trim() ||
