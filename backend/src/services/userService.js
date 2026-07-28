@@ -1,3 +1,5 @@
+const jwt = require("jsonwebtoken");
+
 const bcrypt = require("bcrypt");
 
 const pool = require("../database/db");
@@ -6,7 +8,7 @@ const ApiError = require("../utils/ApiError");
 
 async function registerUser(userData) {
   const { name, email, password, role } = userData;
-  
+
   if (
     !name ||
     !name.trim() ||
@@ -63,9 +65,9 @@ const loginUser = async (userData) => {
 
   if (!email || !email.trim() || !password || !password.trim()) {
     throw new ApiError(400, "Email and password are required.");
-   }
-    const result = await pool.query(
-      `
+  }
+  const result = await pool.query(
+    `
     SELECT
         id,
         name,
@@ -76,34 +78,39 @@ const loginUser = async (userData) => {
     FROM users
     WHERE email = $1;
     `,
-      [email],
-    );
+    [email],
+  );
 
-    if (result.rows.length === 0) {
-      throw new ApiError(401, "Invalid email or password.");
-    }
-  
-    const user = result.rows[0];
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    
-     if (!isPasswordValid) {
-        throw new ApiError(
-            401,
-            "Invalid email or password."
-        );
-    }
+  if (result.rows.length === 0) {
+    throw new ApiError(401, "Invalid email or password.");
+  }
 
-    const {
-        password: hashedPassword,
-        ...safeUser
-    } = user;
+  const user = result.rows[0];
+  const isPasswordValid = await bcrypt.compare(password, user.password);
 
-    return {
-        success: true,
-        message: "Login successful.",
-        user: safeUser
-    };
+  if (!isPasswordValid) {
+    throw new ApiError(401, "Invalid email or password.");
+  }
 
+  const { password: hashedPassword, ...safeUser } = user;
+
+  const token = jwt.sign(
+    {
+      id: user.id,
+      role: user.role,
+    },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: "7d",
+    },
+  );
+
+  return {
+    success: true,
+    message: "Login successful.",
+    token,
+    user: safeUser,
+  };
 };
 
 module.exports = {

@@ -1,7 +1,7 @@
 const express = require("express");
 const notFound = require("./middleware/notFound");
 
- const errorMiddleware = require("./middleware/errorMiddleware");
+const errorMiddleware = require("./middleware/errorMiddleware");
 const userRoutes = require("./routes/userRoutes");
 
 
