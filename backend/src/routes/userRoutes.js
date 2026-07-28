@@ -2,7 +2,7 @@ const express = require("express");
 const authMiddleware = require("../middleware/authMiddleware");
 const authorize = require("../middleware/authorize");
 
-const { registerUser,loginUser } = require("../controllers/userController");
+const { registerUser,loginUser,getMyProfile } = require("../controllers/userController");
 
 const router = express.Router();
 
@@ -35,16 +35,21 @@ router.get(
     }
 );
 
-router.get(
-    "/dashboard",
-    authMiddleware,
-    authorize(
-        "admin",
-        "recruiter"
-    ),
-    controller
-);
+// router.get(
+//     "/dashboard",
+//     authMiddleware,
+//     authorize(
+//         "admin",
+//         "recruiter"
+//     ),
+//     getMyProfile
+// );
 
+router.get(
+    "/profile",
+    authMiddleware,
+    getMyProfile
+);
 
 router.post("/register", registerUser);
 router.post("/login",loginUser);
