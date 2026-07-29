@@ -143,8 +143,101 @@ const getUserProfile = async (userId) => {
 
 };
 
+const updateUserProfile = async (userId, updateData) => {
+
+    const userResult = await pool.query(
+        `
+        SELECT *
+        FROM users
+        WHERE id = $1
+        `,
+        [userId]
+    );
+
+    if (userResult.rows.length === 0) {
+        throw new ApiError(404, "User not found.");
+    }
+
+    if (updateData.email) {
+
+        const emailResult = await pool.query(
+            `
+            SELECT id
+            FROM users
+            WHERE email = $1
+            `,
+            [updateData.email]
+        );
+
+        if (
+            emailResult.rows.length > 0 &&
+            emailResult.rows[0].id !== userId
+        ) {
+            throw new ApiError(
+                409,
+                "Email already exists."
+            );
+        }
+
+    }
+
+    const fields = [];
+    const values = [];
+
+    if (updateData.name) {
+
+        fields.push(
+            `name = $${values.length + 1}`
+        );
+
+        values.push(updateData.name);
+
+    }
+
+    if (updateData.email) {
+
+        fields.push(
+            `email = $${values.length + 1}`
+        );
+
+        values.push(updateData.email);
+
+    }
+    //check whether user sends empty request body or not to update the profile
+    if (fields.length === 0) {
+    throw new ApiError(
+        400,
+        "No fields provided to update."
+    );
+}
+
+    values.push(userId);
+
+    const query = `
+        UPDATE users
+        SET ${fields.join(", ")}
+        WHERE id = $${values.length}
+        RETURNING
+            id,
+            name,
+            email,
+            role,
+            created_at
+    `;
+
+    const result = await pool.query(
+        query,
+        values
+    );
+
+    return result.rows[0];
+
+};
+
 module.exports = {
   registerUser,
   loginUser,
-  getUserProfile
+  getUserProfile,
+  updateUserProfile
 };
+

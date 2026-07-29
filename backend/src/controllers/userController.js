@@ -3,7 +3,9 @@ const asyncHandler = require("../utils/asyncHandler");
 const {
   registerUser: registerUserService,
   loginUser: loginUserService,
-  getUserProfile: getUserProfileService
+  getUserProfile: getUserProfileService,
+  updateUserProfile: updateUserProfileService,
+
 } = require("../services/userService");
 
 
@@ -36,8 +38,29 @@ const getMyProfile = asyncHandler(async (req, res) => {
 
 });
 
+
+const updateProfile = asyncHandler(async (req, res) => {
+
+    const userId = req.user.id;
+
+    const updateData = req.body;
+
+    const updatedUser = await updateUserProfileService(
+        userId,
+        updateData
+    );
+
+    res.status(200).json({
+        success: true,
+        message: "Profile updated successfully.",
+        user: updatedUser
+    });
+
+});
+
 module.exports = {
     registerUser,
     loginUser,
-    getMyProfile
+    getMyProfile,
+    updateProfile
 };
