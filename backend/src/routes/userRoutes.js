@@ -2,7 +2,7 @@ const express = require("express");
 const authMiddleware = require("../middleware/authMiddleware");
 const authorize = require("../middleware/authorize");
 
-const { registerUser,loginUser,getMyProfile, updateProfile } = require("../controllers/userController");
+const { registerUser,loginUser,getMyProfile, updateProfile,changePassword } = require("../controllers/userController");
 
 const router = express.Router();
 
@@ -35,16 +35,6 @@ router.get(
     }
 );
 
-// router.get(
-//     "/dashboard",
-//     authMiddleware,
-//     authorize(
-//         "admin",
-//         "recruiter"
-//     ),
-//     getMyProfile
-// );
-
 router.get(
     "/profile",
     authMiddleware,
@@ -56,6 +46,12 @@ router.patch(
     "/profile",
     authMiddleware,
     updateProfile
+);
+
+router.patch(
+    "/change-password",
+    authMiddleware,
+    changePassword
 );
 
 router.post("/register", registerUser);

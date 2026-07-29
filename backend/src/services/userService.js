@@ -234,10 +234,66 @@ const updateUserProfile = async (userId, updateData) => {
 
 };
 
+const changePasswordService = async (
+    userId,
+    currentPassword,
+    newPassword) => {
+
+    if (!currentPassword || !newPassword) {
+        throw new ApiError(
+            400,
+            "Current password and new password are required."
+        );
+    }
+
+    const userResult = await pool.query(
+        `
+        SELECT *
+        FROM users
+        WHERE id = $1
+        `,
+        [userId]
+    );
+
+    if (userResult.rows.length === 0) {
+        throw new ApiError(
+            404,
+            "User not found."
+        );
+    }
+
+    const isPasswordCorrect = await bcrypt.compare(
+        currentPassword,
+        userResult.rows[0].password
+    );
+
+    if (!isPasswordCorrect) {
+        throw new ApiError(
+            401,
+            "Current password is incorrect."
+        );
+    }
+
+    const hashedPassword = await bcrypt.hash(
+    newPassword,
+    10
+    );
+     
+    await pool.query(
+        `
+        UPDATE users
+        SET password = $1
+        WHERE id = $2
+        `,
+        [hashedPassword, userId]
+    );
+};
+
 module.exports = {
   registerUser,
   loginUser,
   getUserProfile,
-  updateUserProfile
+  updateUserProfile,
+  changePasswordService
 };
 

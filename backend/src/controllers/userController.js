@@ -5,6 +5,7 @@ const {
   loginUser: loginUserService,
   getUserProfile: getUserProfileService,
   updateUserProfile: updateUserProfileService,
+  changePasswordService
 
 } = require("../services/userService");
 
@@ -58,9 +59,32 @@ const updateProfile = asyncHandler(async (req, res) => {
 
 });
 
+
+const changePassword = asyncHandler(async (req, res) => {
+
+    const userId = req.user.id;
+
+    const { currentPassword, newPassword } = req.body;
+
+    await changePasswordService(
+        userId,
+        currentPassword,
+        newPassword
+    );
+
+    res.status(200).json({
+        success: true,
+        message: "Password changed successfully."
+    });
+
+});
+
+
+
 module.exports = {
     registerUser,
     loginUser,
     getMyProfile,
-    updateProfile
+    updateProfile,
+    changePassword
 };
