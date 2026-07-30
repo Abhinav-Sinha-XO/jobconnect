@@ -12,6 +12,12 @@ app.use(express.json());
 require("./database/db");
 
 
+
+
+
+
+
+
 // Default Route
 app.get("/", (req, res) => {
     res.status(200).json({
