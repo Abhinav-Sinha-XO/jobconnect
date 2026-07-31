@@ -3,8 +3,9 @@ const notFound = require("./middleware/notFound");
 
 const errorMiddleware = require("./middleware/errorMiddleware");
 const userRoutes = require("./routes/userRoutes");
-
-
+const companyRoutes = require("./routes/companyRoutes");
+const authMiddleware = require("./middleware/authMiddleware");
+const path=require("path");
 const app = express();
 
 // Middleware
@@ -26,8 +27,13 @@ app.get("/", (req, res) => {
     });
 });
 
+app.use("/api/users/companies", companyRoutes);
 
 app.use("/api/users", userRoutes);
+app.use(
+    "/uploads",
+    express.static(path.join(__dirname, "uploads"))
+);
 
 app.use(notFound);
 app.use(errorMiddleware);
