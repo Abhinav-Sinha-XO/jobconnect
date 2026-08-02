@@ -8,9 +8,15 @@ const authMiddleware = require("./middleware/authMiddleware");
 const path=require("path");
 const app = express();
 
+
+
+const jobRoutes = require("./routes/jobRoutes");
+
+require("./database/db");
+
 // Middleware
 app.use(express.json());
-require("./database/db");
+
 
 
 
@@ -34,6 +40,15 @@ app.use(
     "/uploads",
     express.static(path.join(__dirname, "uploads"))
 );
+
+
+
+app.use(
+    "/api/jobs",
+    jobRoutes
+);
+
+
 
 app.use(notFound);
 app.use(errorMiddleware);
