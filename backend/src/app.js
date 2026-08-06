@@ -9,6 +9,8 @@ const path=require("path");
 const app = express();
 
 
+const applicationRoutes = require("./routes/applicationRoutes");
+
 
 const jobRoutes = require("./routes/jobRoutes");
 
@@ -33,7 +35,7 @@ app.get("/", (req, res) => {
     });
 });
 
-app.use("/api/users/companies", companyRoutes);
+
 
 app.use("/api/users", userRoutes);
 app.use(
@@ -41,11 +43,17 @@ app.use(
     express.static(path.join(__dirname, "uploads"))
 );
 
-
+app.use("/api/companies", 
+    companyRoutes);
 
 app.use(
     "/api/jobs",
     jobRoutes
+);
+
+app.use(
+    "/api/applications",
+    applicationRoutes
 );
 
 
@@ -57,3 +65,5 @@ app.use(errorMiddleware);
 
 
 module.exports = app;
+
+
